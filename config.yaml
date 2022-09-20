@@ -1,0 +1,31 @@
+---
+- hosts: all
+  become: true
+  vars:
+    - motd: "=====================================\n====Ansible Managed node by penas====\n=====================================\n" 
+  tasks:
+
+  - name: install python3 and pip3
+    raw: apt -y install python3-pip
+    failed_when: false
+
+  - name: Use pip3 as Default pip
+    command: cp /usr/bin/pip3 /usr/bin/pip
+    when: ansible_distribution == "Ubuntu"
+
+  - name: Use Python3 as default Python
+    command: cp /usr/bin/python3 /usr/bin/python
+    when: ansible_distribution == "Ubuntu"
+
+  - name: install Java Open-JDK - Ubuntu
+    package:
+      name: openjdk-8-jdk
+      state: present
+    when: ansible_distribution == "Ubuntu"
+
+  - name: install JavaOpen-JDK - CentOS
+    yum: name=java-1.8.0-openjdk.x86_64 state=present
+    when: ansible_distribution == "CentOS"
+
+  - name: MOTD Banner
+    shell: echo " {{motd}} " >>  /home/penas/Penas_PrelimExam/motd
